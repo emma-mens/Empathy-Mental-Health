@@ -68,6 +68,7 @@ lr | `float` | `2e-5` | learning rate
 lambda_EI | `float` | `0.5` | weight of empathy identification loss 
 lambda_RE |  `float` | `0.5` | weight of rationale extraction loss
 dropout |  `float` | `0.1` | dropout
+data_percent | `float` | `1` | training data percent
 max_len | `int` | `64` | maximum sequence length
 batch_size | `int` | `32` | batch size
 epochs | `int` | `4` | number of epochs
@@ -77,6 +78,8 @@ dev_path | `str` | `""` | path to input validation data
 test_path | `str` | `""` | path to input test data
 do_validation | `boolean` | `False` | If set True, compute results on the validation data
 do_test | `boolean` | `False` | If set True, compute results on the test data
+no_domain_pretraining | `boolean` | `False` | If true, don't include domain adaptive pretraining
+no_attention | `boolean` | `False` | If true, don't use attention head
 save_model | `boolean` | `False` | If set True, save the trained model  
 save_model_path | `str` | `""` | path to save model 
 

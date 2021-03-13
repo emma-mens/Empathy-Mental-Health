@@ -66,11 +66,18 @@ print('data_percent = ', args.data_percent)
 print("=============================================")
 
 
+random.seed(args.seed_val)
+np.random.seed(args.seed_val)
+torch.manual_seed(args.seed_val)
+torch.cuda.manual_seed_all(args.seed_val)
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+
 '''
 Use GPU if available
 '''
 if torch.cuda.is_available():
-        device = torch.device("cuda")
+    device = torch.device("cuda:0")
 else:
 	print('No GPU available, using the CPU instead.')
 	device = torch.device("cpu")
@@ -210,11 +217,6 @@ scheduler = get_linear_schedule_with_warmup(optimizer,
 											num_warmup_steps = 0,
 											num_training_steps = total_steps)
 
-random.seed(args.seed_val)
-np.random.seed(args.seed_val)
-torch.manual_seed(args.seed_val)
-torch.cuda.manual_seed_all(args.seed_val)
-torch.backends.cudnn.deterministic = True
 
 
 '''
