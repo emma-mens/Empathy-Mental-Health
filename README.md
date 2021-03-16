@@ -34,6 +34,12 @@ A sample raw input data file is available in [dataset/sample_input_ER.csv](datas
 $ python3 src/process_data.py --input_path dataset/sample_input_ER.csv --output_path dataset/sample_input_model_ER.csv
 ```
 
+To process the medical dataset, run the following command to convert the .txt files from the medical data to a .csv that the model will recognize. The input should be the location of the .txt files that you downloaded (see Dataset Access Instructions for link):
+```
+$ python3 src/med_process_data.py --input_path local1/zsteineh/med_dataset/ --output_path local1/zsteineh/med_dataset/test_med_data.csv
+```
+Note, the test_med_data.csv file is already processed and available at local1/zsteineh/med_dataset/ on nlpg01. We do not provide it in GitHub as the file is too large.
+
 ### 3. Training the model
 For training our model on the sample input data, run the following command:
 ```
@@ -59,12 +65,22 @@ $ python3 src/test.py \
 	--EX_model_path /local1/emazuh/output/reddit-exploration-pretrained.pth
 ```
 
-Once this has run, use `$ python 3 src/analyze_political.py` to generate an output file named `political_outputc.csv`. The hand-annotated 50 examples referenced in the paper, their predicted values, and the F1 calculations can be found in `dataset/Political_Tweets_F1_calculations.csv` (in this repo).
+Once this has run, use `$ python3 src/analyze_political.py` to generate an output file named `political_outputc.csv`. The hand-annotated 50 examples referenced in the paper, their predicted values, and the F1 calculations can be found in `dataset/Political_Tweets_F1_calculations.csv` (in this repo).
 
 Finally, the R Notebook in `src/political_correlation.Rmd` is used to assess levels of empathy in political ingroup and outgroup conversations. This relies on having [R](https://www.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/). To install any libraries in the beginning of the notebook, you can use `install.packages("<library name>")`.
 
 #### Medical dataset
-TODO
+The medical dataset is not included in the github repo due to its large size. However, the data can be accessed and evaluated from nlpg01 using the following command:
+```
+$ python3 src/test.py \
+	--input_path /local1/zsteineh/med_dataset/test_med_data.csv \
+	--output_path /local1/zsteineh/med_dataset/med_data_output.csv \
+	--ER_model_path /local1/emazuh/output/reddit-emotion-pretrained.pth \
+	--IP_model_path /local1/emazuh/output/reddit-interpretation-pretrained.pth \
+	--EX_model_path /local1/emazuh/output/reddit-exploration-pretrained.pth
+```
+
+After running the model on the data, you can use `$ python3 src/pull_hand_labeled.py` to get the statistics of the data and the model labels for the 39 hand-annotated samples. The hand-annotated samples and their F1 calculations can be found in `dataset/Med_dialogue_data/label_med_data.xls`
 
 ## Training Arguments
 
@@ -103,3 +119,20 @@ response_post: A response/reply posted in response to the seeker_post
 level: Empathy level of the response_post in the context of the seeker_post
 rationales: Portions of the response_post that are supporting evidences or rationales for the identified empathy level. Multiple portions are delimited by '|'
 ```
+
+We also test the model on the medical dataset from the paper below:
+```bash
+@article{chen2020meddiag,
+  title={MedDialog: a large-scale medical dialogue dataset},
+  author={Chen, Shu and Ju, Zeqian and Dong, Xiangyu and Fang, Hongchao and Wang, Sicheng and Yang, Yue and Zeng, Jiaqi and Zhang, Ruisi and Zhang, Ruoyu and Zhou, Meng and Zhu, Penghui and Xie, Pengtao},
+  journal={arXiv preprint arXiv:2004.03329}, 
+  year={2020}
+}
+```
+The English part of the dataset, which we used, is available at: https://drive.google.com/drive/folders/1g29ssimdZ6JzTST6Y8g6h-ogUNReBtJD?usp=sharing
+
+## Reproduced Results
+
+The tables below show the reproducibility results of the main points of the paper.
+![Reproducibility Results of Aims 1 and 2](https://github.com/emma-mens/Empathy-Mental-Health/blob/reproducibility/table_imgs/Aim1_reproduce.png?raw=True)
+![Reproducibility Results of Aim 3](https://github.com/emma-mens/Empathy-Mental-Health/blob/reproducibility/table_imgs/Aim3_reproduce.png?raw=True)
