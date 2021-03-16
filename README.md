@@ -1,22 +1,14 @@
 # Empathy in Text-based Mental Health Support
-This repository contains codes and dataset access instructions for the [EMNLP 2020 publication](https://arxiv.org/pdf/2009.08441) on understanding empathy expressed in text-based mental health support.
-
-If this code or dataset helps you in your research, please cite the following publication:
-```bash
-@inproceedings{sharma2020empathy,
-    title={A Computational Approach to Understanding Empathy Expressed in Text-Based Mental Health Support},
-    author={Sharma, Ashish and Miner, Adam S and Atkins, David C and Althoff, Tim},
-    year={2020},
-    booktitle={EMNLP}
-}
-```
+This repository contains codes and dataset access instructions for the CSE 517: NLP class project. We reproduced results from the 2020 EMNLP paper [A Computational Approach to Understanding Empathy Expressed in
+Text-Based Mental Health Support](https://arxiv.org/pdf/2009.08441).
 
 ## Introduction
 
-We present a computational approach to understanding how empathy is expressed in online mental health platforms. We develop a novel unifying theoretically-grounded framework for characterizing the communication of empathy in text-based conversations. We collect and share a corpus of 10k (post, response) pairs annotated using this empathy framework with supporting evidence for annotations (rationales). We develop a multi-task RoBERTa-based bi-encoder model for identifying empathy in conversations and extracting rationales underlying its predictions. Experiments demonstrate that our approach can effectively
-identify empathic conversations. We further apply this model to analyze 235k mental health interactions and show that users do not self-learn empathy over time, revealing opportunities for empathy training and feedback.
+The paper presents a computational approach to understanding how empathy is expressed in online mental health platforms. Sharma et al. collected and shared a corpus of 10k (post, response) pairs annotated using an empathy framework with supporting evidence for annotations (rationales). They used a multi-task RoBERTa-based bi-encoder model for identifying empathy in conversations and extracting rationales underlying its predictions. Their experiments demonstrate that their approach can effectively identify empathic conversations. 
 
-For a quick overview, check out [bdata.uw.edu/empathy](http://bdata.uw.edu/empathy/). For a detailed description of our work, please read our [EMNLP 2020 publication](https://arxiv.org/pdf/2009.08441).
+We have replicated their studies, and extended its applications to two new contexts: medical and political discussions. We also experimented with different hyperparameters and training data batch sizes.
+
+For a quick overview of the original project, check out [bdata.uw.edu/empathy](http://bdata.uw.edu/empathy/). For a detailed description, see the [EMNLP 2020 publication](https://arxiv.org/pdf/2009.08441).
 
 ## Quickstart
 
@@ -27,9 +19,17 @@ Our framework can be compiled on Python 3 environments. The modules used in our 
 $ pip install -r requirements.txt
 ```
 
+If running on a CSE machine (we recommend nlpg01), we recommend using a Python virtual environment, as importing some of the modules may not be permitted. Here, the virtual environment is called v. For more information, see [the Python docs](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/).
+
+```
+$ python3 -m pip install --user virtualenv
+$ python3 -m venv v
+$ source v/bin/activate
+```
 
 ### 2. Prepare dataset
 A sample raw input data file is available in [dataset/sample_input_ER.csv](dataset/sample_input_ER.csv). This file (and other raw input files in the [dataset](dataset) folder) can be converted into a format that is recognized by the model using with following command:
+
 ```
 $ python3 src/process_data.py --input_path dataset/sample_input_ER.csv --output_path dataset/sample_input_model_ER.csv
 ```
@@ -47,16 +47,24 @@ $ python3 src/train.py \
 	--save_model_path=output/sample.pth
 ```
 
-### 4. Testing the model
-For testing our model on the sample test input, run the following command from nlpg01, replacing sample_text_{in, out}put.csv with a file we used, such as political_tweets.csv (input) and output_political_tweets.csv:
+### 4. Results 4.3.4 - 4.3.5: Testing the model 
+#### Political dataset
+The political dataset is not included in the github repo due to user privacy concerns, however it can be accessed from nlpg01 using the following command:
 ```
 $ python3 src/test.py \
-	--input_path dataset/political_tweets.csv \
-	--output_path dataset/political_output.csv \
+	--input_path /local1/baughan/dataset/political_tweets.csv \
+	--output_path /local1/baughan/dataset/political_output.csv \
 	--ER_model_path /local1/emazuh/output/reddit-emotion-pretrained.pth \
 	--IP_model_path /local1/emazuh/output/reddit-interpretation-pretrained.pth \
 	--EX_model_path /local1/emazuh/output/reddit-exploration-pretrained.pth
 ```
+
+Once this has run, use `$ python 3 src/analyze_political.py` to generate an output file named `political_outputc.csv`. The hand-annotated 50 examples referenced in the paper, their predicted values, and the F1 calculations can be found in `dataset/Political_Tweets_F1_calculations.csv` (in this repo).
+
+Finally, the R Notebook in `src/political_correlation.Rmd` is used to assess levels of empathy in political ingroup and outgroup conversations. This relies on having [R](https://www.r-project.org/) and [RStudio](https://rstudio.com/products/rstudio/download/). To install any libraries in the beginning of the notebook, you can use `install.packages("<library name>")`.
+
+#### Medical dataset
+TODO
 
 ## Training Arguments
 
@@ -95,6 +103,3 @@ response_post: A response/reply posted in response to the seeker_post
 level: Empathy level of the response_post in the context of the seeker_post
 rationales: Portions of the response_post that are supporting evidences or rationales for the identified empathy level. Multiple portions are delimited by '|'
 ```
-
-For accessing the TalkLife portion of our dataset for non-commercial use, please contact the TalkLife team [here](mailto:research@talklife.co). 
-
